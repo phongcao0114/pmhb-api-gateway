@@ -1,15 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/models"
 	"pmhb-api-gateway/internal/app/resolver/query"
 	"pmhb-api-gateway/internal/app/response"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/kerrors"
 	"pmhb-api-gateway/internal/pkg/klog"
 
@@ -41,39 +39,27 @@ func NewGraphQLHandler(conf *config.Configs) *GraphQLHandler {
 
 // GraphqlHandler func
 func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "POST":
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			response.WriteJSON(w)(response.HandleError(r, err))
-			return
-		}
-
-		var graphQLPostBody models.GraphQLPostBody
-		err = json.Unmarshal(body, &graphQLPostBody)
-		if err != nil {
-			response.WriteJSON(w)(response.HandleError(r, err))
-			return
-		}
-
-		//token, _ := header.GetTokenFromHttpRequest(r)
-		//if err != nil {
-		//	//	response.WriteJSON(w)(response.HandleError(r, err))
-		//	//	return
-		//	token = ""
-		//}
-		result := graphql.Do(graphql.Params{
-			Schema:         *Init(),
-			RequestString:  graphQLPostBody.Query,
-			VariableValues: graphQLPostBody.Variables,
-			OperationName:  graphQLPostBody.OperationName,
-			//Context:        context.WithValue(context.Background(), "token", token),
-		})
-		json.NewEncoder(w).Encode(result)
-
-	default:
-		fmt.Fprintf(w, "Sorry, only POST method are supported.")
+	var graphQLPostBody models.GraphQLPostBody
+	err := utils.DecodeToBody(&g.errHandler, &graphQLPostBody, r)
+	if err != nil {
+		response.WriteJSON(w)(response.HandleError(r, err))
+		return
 	}
+	//token, _ := header.GetTokenFromHttpRequest(r)
+	//if err != nil {
+	//	//	response.WriteJSON(w)(response.HandleError(r, err))
+	//	//	return
+	//	token = ""
+	//}
+	result := graphql.Do(graphql.Params{
+		Schema:         *Init(),
+		RequestString:  graphQLPostBody.Query,
+		VariableValues: graphQLPostBody.Variables,
+		OperationName:  graphQLPostBody.OperationName,
+		//Context:        context.WithValue(context.Background(), "token", token),
+	})
+	response.WriteJSON(w)(response.HandleSuccess(r, result))
+	return
 }
 
 func Init() *graphql.Schema {
