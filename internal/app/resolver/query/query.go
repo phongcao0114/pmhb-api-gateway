@@ -15,8 +15,8 @@ func Query() *graphql.Object {
 			},
 		},
 
-		//"book_by_id": BookByID,
-		"books": Books,
+		"book_by_id": BookByID,
+		"books":      Books,
 	}
 
 	return graphql.NewObject(
