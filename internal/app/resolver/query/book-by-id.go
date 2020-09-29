@@ -8,7 +8,6 @@ import (
 	"pmhb-book-service/models"
 
 	"github.com/graphql-go/graphql"
-	//"github.com/phongcao0114/pmhb-book-service/internal/app/models"
 )
 
 var BookByID = &graphql.Field{
