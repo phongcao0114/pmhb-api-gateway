@@ -47,7 +47,6 @@ func main() {
 		KLogger.Panicf("[main] Failed to load config, err: %v", err)
 	}
 	config.Config = cfg
-
 	// 5. Set singleton
 	utils.ResponseAppID = config.Config.AppID
 	config.InitRandomProfileUserID()

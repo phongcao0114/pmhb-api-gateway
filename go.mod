@@ -9,6 +9,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/graphql-go/graphql v0.7.9
 	github.com/jinzhu/now v1.1.1 // indirect
+	github.com/phongcao0114/book-api-gateway v0.0.0-20200922033116-1e5acd5181b3 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.1

@@ -2,6 +2,7 @@ package query
 
 import (
 	"encoding/json"
+	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/datatype"
 	"pmhb-api-gateway/internal/pkg/khttp"
 
@@ -20,7 +21,7 @@ var BookByID = &graphql.Field{
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		id, _ := p.Args["id"].(string)
-		url := "http://localhost:8080/kph/api/book/" + id
+		url := config.Config.GraphQLServicePath.BookService + "/kph/api/book/" + id
 		header := map[string]string{
 			"Content-Type": "application/json",
 		}

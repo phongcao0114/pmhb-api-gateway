@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/models"
+	"pmhb-api-gateway/internal/app/resolver/mutation"
 	"pmhb-api-gateway/internal/app/resolver/query"
 	"pmhb-api-gateway/internal/app/response"
 	"pmhb-api-gateway/internal/app/utils"
@@ -65,8 +66,8 @@ func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) 
 func Init() *graphql.Schema {
 	schema, err := graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query: query.Query(),
-			//Mutation: mutation.Mutation(),
+			Query:    query.Query(),
+			Mutation: mutation.Mutation(),
 		},
 	)
 

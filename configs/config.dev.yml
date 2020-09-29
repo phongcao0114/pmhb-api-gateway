@@ -57,3 +57,6 @@ kafka_sasl:
   username: ""
   password: ""
   is_enable: false
+
+graphql_service_path:
+  book_service: "http://localhost:8080"

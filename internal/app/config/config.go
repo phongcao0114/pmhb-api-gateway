@@ -45,14 +45,15 @@ var (
 type (
 	// Configs struct represents Configs collection
 	Configs struct {
-		Stage         Stage
-		AppID         string         `mapstructure:"app_id"`
-		MSSQL         MSSQL          `mapstructure:"mssql_server"`
-		HTTPServer    HTTPServer     `mapstructure:"http_server"`
-		Redis         Redis          `mapstructure:"redis"`
-		KafkaProducer KafkaProducers `mapstructure:"kafka_producer"`
-		KafkaConsumer KafkaConsumers `mapstructure:"kafka_consumer"`
-		KafkaSASL     KafkaSASL      `mapstructure:"kafka_sasl"`
+		Stage              Stage
+		AppID              string             `mapstructure:"app_id"`
+		MSSQL              MSSQL              `mapstructure:"mssql_server"`
+		HTTPServer         HTTPServer         `mapstructure:"http_server"`
+		Redis              Redis              `mapstructure:"redis"`
+		KafkaProducer      KafkaProducers     `mapstructure:"kafka_producer"`
+		KafkaConsumer      KafkaConsumers     `mapstructure:"kafka_consumer"`
+		KafkaSASL          KafkaSASL          `mapstructure:"kafka_sasl"`
+		GraphQLServicePath GraphQLServicePath `mapstructure:"graphql_service_path"`
 	}
 	// KafkaProducers struct represents KafkaProducers collection
 	KafkaProducers struct {
@@ -121,6 +122,11 @@ type (
 		MaxActive   int           `mapstructure:"max_active"`
 		IdleTimeout time.Duration `mapstructure:"idle_timeout"`
 		Password    string        `mapstructure:"password"`
+	}
+
+	// GraphQLServicePath struct represents service paths
+	GraphQLServicePath struct {
+		BookService string `mapstructure:"book_service"`
 	}
 )
 
