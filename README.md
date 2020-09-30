@@ -26,15 +26,6 @@ mutation{
   delete_book(id:"114d4f44-af05-48d0-8650-41406619958b")
 }
 
-`Create a new book:`
-
-mutation{
-  create_book(
-    name:"book004"
-    author:"A.U"
-  )
-}
-
 `Get book list:`
 
 query{
