@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/datatype"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/pkg/khttp"
 	"pmhb-book-service/models"
 
@@ -23,8 +24,16 @@ var Books = &graphql.Field{
 		if err != nil {
 			return nil, err
 		}
+		err = utils.HandleRespError(resp)
+		if err != nil {
+			return nil, err
+		}
 		var books []models.Book
-		json.Unmarshal(resp, &books)
+
+		err = json.Unmarshal(resp, &books)
+		if err != nil {
+			return nil, err
+		}
 		return books, nil
 	},
 }
