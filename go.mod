@@ -13,7 +13,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/viper v1.7.1
-	gitlab.com/neoplatform/neo-service-configuration v0.0.0-20201002065621-cb95ef9ea867 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	pmhb-book-service v0.0.0-20200929093511-dcb3a58670bf
 )
