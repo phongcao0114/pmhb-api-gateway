@@ -23,4 +23,11 @@ type (
 		ErrorCode string `json:"error_code"`
 		ErrorDesc string `json:"error_desc"`
 	}
+
+	// GraphQLPostBody struct contains the graphql post body
+	GraphQLPostBody struct {
+		Query         string                 `json:"query"`
+		Variables     map[string]interface{} `json:"variables"`
+		OperationName string                 `json:"operationName"`
+	}
 )

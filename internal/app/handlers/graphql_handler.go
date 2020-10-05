@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"pmhb-api-gateway/internal/app/config"
-	"pmhb-api-gateway/internal/app/models"
 	"pmhb-api-gateway/internal/app/resolver/mutation"
 	"pmhb-api-gateway/internal/app/resolver/query"
 	"pmhb-api-gateway/internal/app/response"
@@ -40,7 +39,7 @@ func NewGraphQLHandler(conf *config.Configs) *GraphQLHandler {
 
 // GraphqlHandler func
 func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) {
-	var graphQLPostBody models.GraphQLPostBody
+	var graphQLPostBody utils.GraphQLPostBody
 	err := utils.DecodeToBody(&g.errHandler, &graphQLPostBody, r)
 	if err != nil {
 		response.WriteJSON(w)(response.HandleError(r, err))

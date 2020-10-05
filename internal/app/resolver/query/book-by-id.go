@@ -1,9 +1,9 @@
 package query
 
 import (
-	"encoding/json"
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/datatype"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/pkg/khttp"
 
 	"pmhb-book-service/models"
@@ -31,7 +31,6 @@ var BookByID = &graphql.Field{
 			return nil, err
 		}
 		var book models.Book
-		json.Unmarshal(resp, &book)
-		return book, nil
+		return utils.HandleResp(resp, &book)
 	},
 }
