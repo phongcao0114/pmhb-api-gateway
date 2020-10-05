@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"pmhb-api-gateway/internal/app/config"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/pkg/khttp"
 	"pmhb-book-service/models"
 
@@ -36,10 +37,11 @@ var UpdateBook = &graphql.Field{
 			"Content-Type": "application/json",
 		}
 		httpCaller := khttp.New(url, bookReq, header)
-		_, err := httpCaller.PUT()
+		resp, err := httpCaller.PUT()
 		if err != nil {
 			return nil, err
 		}
-		return true, nil
+		var status bool
+		return utils.HandleResp(resp, &status)
 	},
 }

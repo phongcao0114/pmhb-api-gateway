@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"pmhb-api-gateway/internal/app/config"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/pkg/khttp"
 
 	"github.com/graphql-go/graphql"
@@ -22,10 +23,11 @@ var DeleteBook = &graphql.Field{
 			"Content-Type": "application/json",
 		}
 		httpCaller := khttp.New(url, nil, header)
-		_, err := httpCaller.DELETE()
+		resp, err := httpCaller.DELETE()
 		if err != nil {
 			return nil, err
 		}
-		return true, nil
+		var status bool
+		return utils.HandleResp(resp, &status)
 	},
 }

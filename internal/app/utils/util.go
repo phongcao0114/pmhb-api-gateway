@@ -133,13 +133,18 @@ func SplitCardDate(month, year string) string {
 	return string(arrStr[len(arrStr)-2:]) + month
 }
 
-func HandleRespError(resp []byte) error {
+func HandleResp(resp []byte, v interface{}) (interface{}, error) {
 	respHeader := KbankResponseHeader{}
 	json.Unmarshal(resp, &respHeader)
 	if respHeader != (KbankResponseHeader{}) {
-		return errors.New(respHeader.Errors.ErrorDesc)
+		return nil, errors.New(respHeader.Errors.ErrorDesc)
 	}
-	return nil
+
+	err := json.Unmarshal(resp, v)
+	if err != nil {
+		return nil, err
+	}
+	return v, nil
 }
 
 func ChildrenOfField(params graphql.ResolveParams) ([]string, error) {
@@ -196,35 +201,35 @@ func getChildren(field *ast.Field) []*ast.Field {
 //	}
 //	return collect
 //}
-
-func GetSelectedFields(params graphql.ResolveParams) ([]string, error) {
-	fieldASTs := params.Info.FieldASTs
-	if len(fieldASTs) == 0 {
-		return nil, fmt.Errorf("getSelectedFields: ResolveParams has no fields")
-	}
-	return selectedFieldsFromSelections(params, fieldASTs[0].SelectionSet.Selections)
-}
-
-func selectedFieldsFromSelections(params graphql.ResolveParams, selections []ast.Selection) ([]string, error) {
-	var selected []string
-	for _, s := range selections {
-		switch t := s.(type) {
-		case *ast.Field:
-			selected = append(selected, s.(*ast.Field).Name.Value)
-		case *ast.FragmentSpread:
-			n := s.(*ast.FragmentSpread).Name.Value
-			frag, ok := params.Info.Fragments[n]
-			if !ok {
-				return nil, fmt.Errorf("getSelectedFields: no fragment found with name %v", n)
-			}
-			sel, err := selectedFieldsFromSelections(params, frag.GetSelectionSet().Selections)
-			if err != nil {
-				return nil, err
-			}
-			selected = append(selected, sel...)
-		default:
-			return nil, fmt.Errorf("getSelectedFields: found unexpected selection type %v", t)
-		}
-	}
-	return selected, nil
-}
+//
+//func GetSelectedFields(params graphql.ResolveParams) ([]string, error) {
+//	fieldASTs := params.Info.FieldASTs
+//	if len(fieldASTs) == 0 {
+//		return nil, fmt.Errorf("getSelectedFields: ResolveParams has no fields")
+//	}
+//	return selectedFieldsFromSelections(params, fieldASTs[0].SelectionSet.Selections)
+//}
+//
+//func selectedFieldsFromSelections(params graphql.ResolveParams, selections []ast.Selection) ([]string, error) {
+//	var selected []string
+//	for _, s := range selections {
+//		switch t := s.(type) {
+//		case *ast.Field:
+//			selected = append(selected, s.(*ast.Field).Name.Value)
+//		case *ast.FragmentSpread:
+//			n := s.(*ast.FragmentSpread).Name.Value
+//			frag, ok := params.Info.Fragments[n]
+//			if !ok {
+//				return nil, fmt.Errorf("getSelectedFields: no fragment found with name %v", n)
+//			}
+//			sel, err := selectedFieldsFromSelections(params, frag.GetSelectionSet().Selections)
+//			if err != nil {
+//				return nil, err
+//			}
+//			selected = append(selected, sel...)
+//		default:
+//			return nil, fmt.Errorf("getSelectedFields: found unexpected selection type %v", t)
+//		}
+//	}
+//	return selected, nil
+//}

@@ -2,6 +2,7 @@ package mutation
 
 import (
 	"pmhb-api-gateway/internal/app/config"
+	"pmhb-api-gateway/internal/app/utils"
 	"pmhb-api-gateway/internal/pkg/khttp"
 
 	"pmhb-book-service/models"
@@ -10,7 +11,7 @@ import (
 )
 
 var CreateBook = &graphql.Field{
-	Type:        graphql.Boolean,
+	Type:        graphql.String,
 	Description: "CreateBook",
 	Args: graphql.FieldConfigArgument{
 		"name": &graphql.ArgumentConfig{
@@ -33,10 +34,11 @@ var CreateBook = &graphql.Field{
 			"Content-Type": "application/json",
 		}
 		httpCaller := khttp.New(url, bookReq, header)
-		_, err := httpCaller.POST()
+		resp, err := httpCaller.POST()
 		if err != nil {
 			return nil, err
 		}
-		return true, nil
+		var id string
+		return utils.HandleResp(resp, &id)
 	},
 }
