@@ -9,10 +9,7 @@ import (
 	"net/http"
 	"pmhb-api-gateway/internal/kerrors"
 	"pmhb-api-gateway/internal/pkg/mapper"
-
-	"github.com/graphql-go/graphql/language/ast"
-
-	"github.com/graphql-go/graphql"
+	"strings"
 
 	"time"
 )
@@ -30,6 +27,16 @@ var (
 
 	// LogKey contains log timing details
 	LogKey = "log_request"
+
+	SecretKey          = "SECRETKEY"
+	errNoTokenInHeader = errors.New("no authentication token in header")
+	errInvalidToken    = errors.New("invalid token")
+)
+
+const (
+	TokenHeaderKey = "token"
+	AuthHeaderKey  = "authorization"
+	BearerPrefix   = "Bearer "
 )
 
 // GetRequestID function returns request ID
@@ -147,33 +154,42 @@ func HandleResp(resp []byte, v interface{}) (interface{}, error) {
 	return v, nil
 }
 
-func ChildrenOfField(params graphql.ResolveParams) ([]string, error) {
-	fields := params.Info.FieldASTs
+func GetTokenFromHttpRequest(r *http.Request) (string, error) {
+	if authString := r.Header.Get(AuthHeaderKey); !strings.HasPrefix(authString, BearerPrefix) {
+		return "", errNoTokenInHeader
 
-	if len(fields) != 1 {
-		return nil, errors.New(fmt.Sprintf("found more than one (%v) field ASTs at top level; unsupported behavior", len(fields)))
+	} else {
+		return authString[len(BearerPrefix):], nil
 	}
-
-	fields = getChildren(fields[0])
-
-	var selected []string
-	for _, field := range fields {
-		selected = append(selected, field.Name.Value)
-	}
-
-	return selected, nil
 }
 
-func getChildren(field *ast.Field) []*ast.Field {
-	fields := make([]*ast.Field, 0)
-	selections := field.SelectionSet.Selections
-
-	for _, selection := range selections {
-		fields = append(fields, selection.(*ast.Field))
-	}
-
-	return fields
-}
+//func ChildrenOfField(params graphql.ResolveParams) ([]string, error) {
+//	fields := params.Info.FieldASTs
+//
+//	if len(fields) != 1 {
+//		return nil, errors.New(fmt.Sprintf("found more than one (%v) field ASTs at top level; unsupported behavior", len(fields)))
+//	}
+//
+//	fields = getChildren(fields[0])
+//
+//	var selected []string
+//	for _, field := range fields {
+//		selected = append(selected, field.Name.Value)
+//	}
+//
+//	return selected, nil
+//}
+//
+//func getChildren(field *ast.Field) []*ast.Field {
+//	fields := make([]*ast.Field, 0)
+//	selections := field.SelectionSet.Selections
+//
+//	for _, selection := range selections {
+//		fields = append(fields, selection.(*ast.Field))
+//	}
+//
+//	return fields
+//}
 
 //func GetSelectedFields(selectionPath []string,
 //	resolveParams graphql.ResolveParams) []string {

@@ -30,4 +30,8 @@ type (
 		Variables     map[string]interface{} `json:"variables"`
 		OperationName string                 `json:"operationName"`
 	}
+
+	JWTPayload struct {
+		Username string `json:"username"`
+	}
 )

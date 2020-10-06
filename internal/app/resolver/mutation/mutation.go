@@ -18,6 +18,8 @@ func Mutation() *graphql.Object {
 		"create_book": CreateBook,
 		"delete_book": DeleteBook,
 		"update_book": UpdateBook,
+
+		"login": Login,
 	}
 
 	return graphql.NewObject(

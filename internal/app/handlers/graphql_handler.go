@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"pmhb-api-gateway/internal/app/config"
@@ -8,6 +9,7 @@ import (
 	"pmhb-api-gateway/internal/app/resolver/query"
 	"pmhb-api-gateway/internal/app/response"
 	"pmhb-api-gateway/internal/app/utils"
+	"pmhb-api-gateway/internal/app/validation/header"
 	"pmhb-api-gateway/internal/kerrors"
 	"pmhb-api-gateway/internal/pkg/klog"
 
@@ -45,18 +47,19 @@ func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) 
 		response.WriteJSON(w)(response.HandleError(r, err))
 		return
 	}
-	//token, _ := header.GetTokenFromHttpRequest(r)
-	//if err != nil {
-	//	//	response.WriteJSON(w)(response.HandleError(r, err))
-	//	//	return
-	//	token = ""
-	//}
+	token, err := header.GetTokenFromHttpRequest(r)
+	if err != nil {
+		//response.WriteJSON(w)(response.HandleError(r, err))
+		//return
+		token = ""
+	}
+
 	result := graphql.Do(graphql.Params{
 		Schema:         *Init(),
 		RequestString:  graphQLPostBody.Query,
 		VariableValues: graphQLPostBody.Variables,
 		OperationName:  graphQLPostBody.OperationName,
-		//Context:        context.WithValue(context.Background(), "token", token),
+		Context:        context.WithValue(context.Background(), utils.TokenHeaderKey, token),
 	})
 	response.WriteJSON(w)(response.HandleSuccess(r, result))
 	return
