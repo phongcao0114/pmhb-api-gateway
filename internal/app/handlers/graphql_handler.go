@@ -49,8 +49,6 @@ func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	token, err := header.GetTokenFromHttpRequest(r)
 	if err != nil {
-		//response.WriteJSON(w)(response.HandleError(r, err))
-		//return
 		token = ""
 	}
 
@@ -59,7 +57,7 @@ func (g *GraphQLHandler) GraphqlHandler(w http.ResponseWriter, r *http.Request) 
 		RequestString:  graphQLPostBody.Query,
 		VariableValues: graphQLPostBody.Variables,
 		OperationName:  graphQLPostBody.OperationName,
-		Context:        context.WithValue(context.Background(), utils.TokenHeaderKey, token),
+		Context:        context.WithValue(context.Background(), header.TokenHeaderKey, token),
 	})
 	response.WriteJSON(w)(response.HandleSuccess(r, result))
 	return

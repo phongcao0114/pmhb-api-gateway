@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 	"pmhb-api-gateway/internal/kerrors"
+	"pmhb-api-gateway/internal/pkg/khttp"
 	"pmhb-api-gateway/internal/pkg/mapper"
-	"strings"
 
 	"time"
 )
@@ -27,16 +27,6 @@ var (
 
 	// LogKey contains log timing details
 	LogKey = "log_request"
-
-	SecretKey          = "SECRETKEY"
-	errNoTokenInHeader = errors.New("no authentication token in header")
-	errInvalidToken    = errors.New("invalid token")
-)
-
-const (
-	TokenHeaderKey = "token"
-	AuthHeaderKey  = "authorization"
-	BearerPrefix   = "Bearer "
 )
 
 // GetRequestID function returns request ID
@@ -140,6 +130,13 @@ func SplitCardDate(month, year string) string {
 	return string(arrStr[len(arrStr)-2:]) + month
 }
 
+func MakeHTTPCaller(url string, body interface{}) khttp.HttpCaller {
+	header := map[string]string{
+		"Content-Type": "application/json",
+	}
+	return khttp.New(url, body, header)
+}
+
 func HandleResp(resp []byte, v interface{}) (interface{}, error) {
 	respHeader := KbankResponseHeader{}
 	json.Unmarshal(resp, &respHeader)
@@ -152,15 +149,6 @@ func HandleResp(resp []byte, v interface{}) (interface{}, error) {
 		return nil, err
 	}
 	return v, nil
-}
-
-func GetTokenFromHttpRequest(r *http.Request) (string, error) {
-	if authString := r.Header.Get(AuthHeaderKey); !strings.HasPrefix(authString, BearerPrefix) {
-		return "", errNoTokenInHeader
-
-	} else {
-		return authString[len(BearerPrefix):], nil
-	}
 }
 
 //func ChildrenOfField(params graphql.ResolveParams) ([]string, error) {

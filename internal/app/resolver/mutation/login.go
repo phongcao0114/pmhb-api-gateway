@@ -3,6 +3,7 @@ package mutation
 import (
 	"errors"
 	"pmhb-api-gateway/internal/app/utils"
+	"pmhb-api-gateway/internal/app/validation/header"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -22,6 +23,7 @@ var Login = &graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		//Parse arguments
 		username := p.Args["username"].(string)
 		password := p.Args["password"].(string)
 
@@ -30,13 +32,16 @@ var Login = &graphql.Field{
 		if !flag {
 			return nil, errors.New("wrong password")
 		}
+
 		//Login is assumed always success
 		tokenService := jwt.DefaultTokenService{}
 		exp := int64(15 * 60 * 1000)
 		payload := utils.JWTPayload{
 			Username: username,
 		}
-		token, err := tokenService.GenerateToken(payload, utils.SecretKey, exp)
+
+		//Generate token
+		token, err := tokenService.GenerateToken(payload, header.SecretKey, exp)
 		if err != nil {
 			return nil, err
 		}

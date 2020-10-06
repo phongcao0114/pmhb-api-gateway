@@ -3,7 +3,7 @@ package mutation
 import (
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/utils"
-	"pmhb-api-gateway/internal/pkg/khttp"
+	"pmhb-api-gateway/internal/app/validation/header"
 	"pmhb-book-service/models"
 
 	"github.com/graphql-go/graphql"
@@ -24,23 +24,29 @@ var UpdateBook = &graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+		//Validate token
+		if err := header.ValidateJWT(p.Context); err != nil {
+			return nil, err
+		}
+
+		//Parse arguments
 		id, _ := p.Args["id"].(string)
 		name, _ := p.Args["name"].(string)
 		author, _ := p.Args["author"].(string)
+
+		//Make HTTP call
 		bookReq := models.UpdateBookReq{
 			Name:   name,
 			Author: author,
 		}
-
 		url := config.Config.GraphQLServicePath.BookService + "/kph/api/book/" + id
-		header := map[string]string{
-			"Content-Type": "application/json",
-		}
-		httpCaller := khttp.New(url, bookReq, header)
+		httpCaller := utils.MakeHTTPCaller(url, bookReq)
 		resp, err := httpCaller.PUT()
 		if err != nil {
 			return nil, err
 		}
+
+		//Handle response from service
 		var status bool
 		return utils.HandleResp(resp, &status)
 	},

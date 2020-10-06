@@ -4,7 +4,7 @@ import (
 	"pmhb-api-gateway/internal/app/config"
 	"pmhb-api-gateway/internal/app/datatype"
 	"pmhb-api-gateway/internal/app/utils"
-	"pmhb-api-gateway/internal/pkg/khttp"
+	"pmhb-api-gateway/internal/app/validation/header"
 
 	"pmhb-book-service/models"
 
@@ -20,16 +20,23 @@ var BookByID = &graphql.Field{
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		id, _ := p.Args["id"].(string)
-		url := config.Config.GraphQLServicePath.BookService + "/kph/api/book/" + id
-		header := map[string]string{
-			"Content-Type": "application/json",
+		//Validate token
+		if err := header.ValidateJWT(p.Context); err != nil {
+			return nil, err
 		}
-		httpCaller := khttp.New(url, nil, header)
+
+		//Parse arguments
+		id, _ := p.Args["id"].(string)
+
+		//Make HTTP call
+		url := config.Config.GraphQLServicePath.BookService + "/kph/api/book/" + id
+		httpCaller := utils.MakeHTTPCaller(url, nil)
 		resp, err := httpCaller.GET()
 		if err != nil {
 			return nil, err
 		}
+
+		//Handle response from service
 		var book models.Book
 		return utils.HandleResp(resp, &book)
 	},

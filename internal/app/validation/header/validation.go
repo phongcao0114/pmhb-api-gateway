@@ -1,16 +1,17 @@
 package header
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/common-go/jwt"
 )
 
 var (
-	SecretKey          = []byte("SECRETKEY")
+	SecretKey          = "SECRETKEY"
 	errNoTokenInHeader = errors.New("no authentication token in header")
 	errInvalidToken    = errors.New("invalid token")
 )
@@ -30,6 +31,12 @@ const (
 
 	// OriginalUIDLimit is original uid limit
 	OriginalUIDLimit = 50
+
+	TokenHeaderKey = "token"
+
+	AuthHeaderKey = "authorization"
+
+	BearerPrefix = "Bearer "
 )
 
 // isValidRequestID func
@@ -74,32 +81,7 @@ func IsEmpty(field string) bool {
 	return len(field) == 0
 }
 
-// ParseToken parses a jwt token and returns the username in it's claims
-func ParseToken(tokenStr string) (string, error) {
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		return SecretKey, nil
-	})
-	if err != nil {
-		return "", err
-	}
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		username := claims["username"].(string)
-		return username, nil
-	} else {
-		return "", err
-	}
-}
-
-// ValidateJWT func
-func ValidateJWT(tokenString string) error {
-	_, err := ParseToken(tokenString)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// GetTokenFromHttpRequest func
+//GetTokenFromHttpRequest func
 func GetTokenFromHttpRequest(r *http.Request) (string, error) {
 	if authString := r.Header.Get(AuthHeaderKey); !strings.HasPrefix(authString, BearerPrefix) {
 		return "", errNoTokenInHeader
@@ -107,4 +89,15 @@ func GetTokenFromHttpRequest(r *http.Request) (string, error) {
 	} else {
 		return authString[len(BearerPrefix):], nil
 	}
+}
+
+// ValidateJWT func
+func ValidateJWT(context context.Context) error {
+	tokenService := jwt.DefaultTokenService{}
+	tokenString := context.Value(TokenHeaderKey).(string)
+	_, _, _, err := tokenService.VerifyToken(tokenString, SecretKey)
+	if err != nil {
+		return err
+	}
+	return nil
 }
