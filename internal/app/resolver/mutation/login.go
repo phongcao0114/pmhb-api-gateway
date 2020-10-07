@@ -27,13 +27,13 @@ var Login = &graphql.Field{
 		username := p.Args["username"].(string)
 		password := p.Args["password"].(string)
 
+		//Handle login
 		hashedPasswordFromDB, _ := hashPassword("P@ssw0rd") //TODO: get from DB
 		flag := checkPasswordHash(password, hashedPasswordFromDB)
 		if !flag {
 			return nil, errors.New("wrong password")
 		}
 
-		//Login is assumed always success
 		tokenService := jwt.DefaultTokenService{}
 		exp := int64(15 * 60 * 1000)
 		payload := utils.JWTPayload{
