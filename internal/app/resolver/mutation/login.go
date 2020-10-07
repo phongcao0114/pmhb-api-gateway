@@ -16,10 +16,10 @@ var Login = &graphql.Field{
 	Description: "Login",
 	Args: graphql.FieldConfigArgument{
 		"username": &graphql.ArgumentConfig{
-			Type: graphql.String,
+			Type: graphql.NewNonNull(graphql.String),
 		},
 		"password": &graphql.ArgumentConfig{
-			Type: graphql.String,
+			Type: graphql.NewNonNull(graphql.String),
 		},
 	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
