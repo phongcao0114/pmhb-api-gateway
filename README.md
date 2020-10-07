@@ -1,49 +1,93 @@
 # pmhb-api-gateway
-Access: localhost:10000
+An implementation of GraphQL in Go.
+This is an example which defines GraphQL queries for basic CRUD functions in pmhb-book-service with the resulting output printed in JSON format.
 
+## Getting Started
+```bash
+go get https://github.com/phongcao0114/pmhb-api-gateway
+```
+```bash
+go get https://github.com/phongcao0114/pmhb-book-service
+```
 
-`Create a new book:`
+## Running
+1. Import Database: ./pmhb-book-service/book.sql
+2. Run pmhb-book-service
+3. Run pmhb-api-gateway
+4. Access: 
+http://localhost:10000/
 
-mutation{
-  create_book(
-    name:"book004"
-    author:"A.U"
-  )
-}
+## Queries
 
-`Update book by id:`
+####Login:
+Query:
 
-mutation{
-  update_book(
-    id: "3527285a-64e7-46b3-95d6-2b9d849b6504"
-    author:"B.C"
-  )
-}
+	mutation ($username: String!,$password: String!){
+		login(
+			username: $username
+			password: $password
+		)
+	}
+Query variables:
 
-`Delete book:`
+	{
+		"username": "user1",
+		"password": "P@ssw0rd"
+	}
+Sample response:
 
-mutation{
-  delete_book(id:"114d4f44-af05-48d0-8650-41406619958b")
-}
+	{
+		"data": {
+			"login": <token>
+		}
+	}
 
-`Get book list:`
+####Get book list:
+Query:
 
-query{
-  books{
-    id,
-    name,
-    author
-  }
-}
+	query{
+		books{
+			id,
+			name,
+			author
+		}
+	}
 
-`Get book by id:`
+HTTP Headers:
 
-query{
-  book_by_id(
-    id:"045ce937-2122-4804-8d05-e30f6e07acfc"
-  ){
-    id
-    name
-    author
-  }
-}
+	{
+		"Authorization":"Bearer <token>"
+	}
+####Get book by id:
+Query:
+Query variables:
+HTTP Headers:
+
+	{
+		"Authorization":"Bearer <token>"
+	}
+####Create a new book:
+Query:
+Query variables:
+HTTP Headers:
+
+	{
+		"Authorization":"Bearer <token>"
+	}
+####Update a book:
+Query:
+Query variables:
+HTTP Headers:
+
+	{
+		"Authorization":"Bearer <token>"
+	}
+####Delete a book:
+Query:
+Query variables:
+HTTP Headers:
+
+	{
+		"Authorization":"Bearer <token>"
+	}
+
