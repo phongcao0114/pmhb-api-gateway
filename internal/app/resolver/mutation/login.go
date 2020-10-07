@@ -25,7 +25,7 @@ var Login = &graphql.Field{
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		//Parse arguments
 		username := p.Args["username"].(string)
-		password := p.Args["password"].(string)
+		password := p.Args["password"].(string) // TODO: access_token instead
 
 		hashedPasswordFromDB, _ := hashPassword("P@ssw0rd") //TODO: get from DB
 		flag := checkPasswordHash(password, hashedPasswordFromDB)

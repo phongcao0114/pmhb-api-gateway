@@ -1,6 +1,8 @@
 package query
 
 import (
+	"pmhb-api-gateway/internal/app/resolver/query/employees"
+
 	"github.com/graphql-go/graphql"
 )
 
@@ -17,6 +19,7 @@ func Query() *graphql.Object {
 
 		"book_by_id": BookByID,
 		"books":      Books,
+		"employees":  employees.Employees,
 	}
 
 	return graphql.NewObject(
