@@ -2,7 +2,7 @@
 An implementation of GraphQL in Go.
 This is an example which defines GraphQL queries for basic CRUD functions in pmhb-book-service with the resulting output printed in JSON format.
 
-## Getting Started
+# Getting Started
 ```bash
 go get https://github.com/phongcao0114/pmhb-api-gateway
 ```
@@ -10,16 +10,17 @@ go get https://github.com/phongcao0114/pmhb-api-gateway
 go get https://github.com/phongcao0114/pmhb-book-service
 ```
 
-## Running
+# Running
 1. Import Database: ./pmhb-book-service/book.sql
 2. Run pmhb-book-service
 3. Run pmhb-api-gateway
 4. Access: 
 http://localhost:10000/
 
-## Queries
+# Queries
 
-###Login:
+##Login:
+
 Query:
 
 	mutation ($username: String!,$password: String!){
@@ -42,7 +43,8 @@ Sample response:
 		}
 	}
 
-###Get book list:
+##Get book list:
+
 Query:
 
 	query{
@@ -58,7 +60,9 @@ HTTP Headers:
 	{
 		"Authorization":"Bearer <token>"
 	}
-###Get book by id:
+
+##Get book by id:
+
 Query:
 
 	query($id: String!) {
@@ -78,7 +82,9 @@ HTTP Headers:
 	{
 		"Authorization":"Bearer <token>"
 	}
-###Create a new book:
+	
+##Create a new book:
+
 Query:
 
 	mutation ($name: String!,$author: String!){
@@ -98,7 +104,9 @@ HTTP Headers:
 	{
 		"Authorization":"Bearer <token>"
 	}
-###Update a book:
+	
+##Update a book:
+
 Query:
 
 	mutation ($id: String,$author: String){
@@ -118,7 +126,9 @@ HTTP Headers:
 	{
 		"Authorization":"Bearer <token>"
 	}
-###Delete a book:
+
+##Delete a book:
+
 Query:
 
 	mutation($id: String!){
